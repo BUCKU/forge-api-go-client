@@ -120,6 +120,19 @@ type Projects struct {
 					} `json:"link,omitempty"`
 				} `json:"meta,omitempty"`
 			} `json:"rootFolder,omitempty"`
+			TopFolders struct {
+				Links struct {
+					Related struct {
+						Href string `json:"href,omitempty"`
+					} `json:"related,omitempty"`
+				} `json:"links,omitempty"`
+			} `json:"topFolders,omitempty"`
+			Issues struct {
+				Data struct {
+					Type string `json:"type,omitempty"`
+					ID   string `json:"id,omitempty"`
+				} `json:"data,omitempty"`
+			} `json:"issues,omitempty"`
 		} `json:"relationships,omitempty"`
 	} `json:"data,omitempty"`
 }
