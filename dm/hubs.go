@@ -200,10 +200,11 @@ func getHubProjects(path string, token string) (result Projects, err error) {
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	response, err := task.Do(req)
+	defer response.Body.Close()
 	if err != nil {
 		return Projects{}, err
 	}
-	defer response.Body.Close()
+
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)

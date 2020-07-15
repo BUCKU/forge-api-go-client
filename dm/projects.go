@@ -386,10 +386,10 @@ func getFolderContents(path string, token string) (result *FolderContents, err e
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	response, err := task.Do(req)
+	defer response.Body.Close()
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		err = errors.New(strconv.Itoa(response.StatusCode))
@@ -428,6 +428,7 @@ func getItemData(path string, token string) (result *ItemData, err error) {
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	response, err := task.Do(req)
+	defer response.Body.Close()
 	if err != nil {
 		log.Printf("Error at request: %v", err.Error())
 		return nil, err
@@ -439,7 +440,6 @@ func getItemData(path string, token string) (result *ItemData, err error) {
 		return nil, err
 	}
 
-	defer response.Body.Close()
 	decoder := json.NewDecoder(response.Body)
 	err = decoder.Decode(&result)
 	return result, nil
@@ -481,6 +481,7 @@ func getItemReader(link string, token string) (*io.ReadCloser, error) {
 		return nil, err
 	}
 
+	//TODO: Подтекает ?
 	return &response.Body, nil
 }
 
