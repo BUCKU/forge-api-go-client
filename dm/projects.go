@@ -104,7 +104,7 @@ type FolderContents struct {
 			VersionNumber        int       `json:"versionNumber,omitempty"`
 			MimeType             string    `json:"mimeType,omitempty"`
 			FileType             string    `json:"fileType,omitempty"`
-			StorageSize          uint64       `json:"storageSize,omitempty"`
+			StorageSize          uint64    `json:"storageSize,omitempty"`
 			Extension            struct {
 				Type    string `json:"type,omitempty"`
 				Version string `json:"version,omitempty"`
@@ -271,7 +271,7 @@ type ItemData struct {
 			VersionNumber        int       `json:"versionNumber,omitempty"`
 			MimeType             string    `json:"mimeType,omitempty"`
 			FileType             string    `json:"fileType,omitempty"`
-			StorageSize          uint64       `json:"storageSize,omitempty"`
+			StorageSize          uint64    `json:"storageSize,omitempty"`
 			Extension            struct {
 				Type    string `json:"type,omitempty"`
 				Version string `json:"version,omitempty"`
@@ -351,16 +351,14 @@ type ProjectsAPI struct {
 	ProjectsAPIPath string
 }
 
-
 func NewProjectsAPIWithCredentials(ClientID, ClientSecret, ProjectId string) ProjectsAPI {
 	return ProjectsAPI{
-		TwoLeggedAuth: oauth.NewTwoLeggedClient(ClientID, ClientSecret),
-		ProjectsAPIPath:   fmt.Sprintf("/data/v1/projects/%s/", ProjectId), // projects/:project_id/folders/:folder_id/
+		TwoLeggedAuth:   oauth.NewTwoLeggedClient(ClientID, ClientSecret),
+		ProjectsAPIPath: fmt.Sprintf("/data/v1/projects/%s/", ProjectId), // projects/:project_id/folders/:folder_id/
 	}
 }
 
-
-func (api *ProjectsAPI) GetFolderContents(FolderId string) (result *FolderContents, err error){
+func (api *ProjectsAPI) GetFolderContents(FolderId string) (result *FolderContents, err error) {
 	//bearer, err := api.Authenticate("data:read")
 	bearer, err := api.AuthenticateIfNecessary("data:read")
 	if err != nil {
@@ -371,7 +369,6 @@ func (api *ProjectsAPI) GetFolderContents(FolderId string) (result *FolderConten
 	result, err = getFolderContents(path, bearer.AccessToken)
 	return result, err
 }
-
 
 func getFolderContents(path string, token string) (result *FolderContents, err error) {
 	task := http.Client{}
@@ -386,7 +383,10 @@ func getFolderContents(path string, token string) (result *FolderContents, err e
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	response, err := task.Do(req)
-	defer response.Body.Close()
+	if response != nil {
+		defer response.Body.Close()
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -401,8 +401,7 @@ func getFolderContents(path string, token string) (result *FolderContents, err e
 	return result, nil
 }
 
-
-func (api *ProjectsAPI) GetItemData(itemId string) (result *ItemData, err error){
+func (api *ProjectsAPI) GetItemData(itemId string) (result *ItemData, err error) {
 	//bearer, err := api.Authenticate("data:read")
 	bearer, err := api.AuthenticateIfNecessary("data:read")
 	if err != nil {
@@ -413,7 +412,6 @@ func (api *ProjectsAPI) GetItemData(itemId string) (result *ItemData, err error)
 	result, err = getItemData(path, bearer.AccessToken)
 	return result, err
 }
-
 
 func getItemData(path string, token string) (result *ItemData, err error) {
 	task := http.Client{}
@@ -428,7 +426,9 @@ func getItemData(path string, token string) (result *ItemData, err error) {
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	response, err := task.Do(req)
-	defer response.Body.Close()
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		log.Printf("Error at request: %v", err.Error())
 		return nil, err
@@ -445,7 +445,6 @@ func getItemData(path string, token string) (result *ItemData, err error) {
 	return result, nil
 }
 
-
 func (api *ProjectsAPI) GetItemReader(itemStorageLink string) (result *io.ReadCloser, err error) {
 	bearer, err := api.AuthenticateIfNecessary("data:read")
 	if err != nil {
@@ -455,7 +454,6 @@ func (api *ProjectsAPI) GetItemReader(itemStorageLink string) (result *io.ReadCl
 	result, err = getItemReader(itemStorageLink, bearer.AccessToken)
 	return result, err
 }
-
 
 func getItemReader(link string, token string) (*io.ReadCloser, error) {
 	task := http.Client{}

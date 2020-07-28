@@ -51,8 +51,6 @@ func (api BucketAPI) ListObjects(bucketKey, limit, beginsWith, startAt string) (
 	return listObjects(path, bucketKey, limit, beginsWith, startAt, bearer.AccessToken)
 }
 
-
-
 /*
  *	SUPPORT FUNCTIONS
  */
@@ -61,7 +59,7 @@ func listObjects(path, bucketKey, limit, beginsWith, startAt, token string) (res
 	task := http.Client{}
 
 	req, err := http.NewRequest("GET",
-		path + "/" + bucketKey + "/objects",
+		path+"/"+bucketKey+"/objects",
 		nil,
 	)
 
@@ -84,10 +82,12 @@ func listObjects(path, bucketKey, limit, beginsWith, startAt, token string) (res
 
 	req.Header.Set("Authorization", "Bearer "+token)
 	response, err := task.Do(req)
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		return
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)
@@ -107,7 +107,7 @@ func uploadObject(path, bucketKey, objectName string, data []byte, token string)
 
 	dataContent := bytes.NewReader(data)
 	req, err := http.NewRequest("PUT",
-		path+"/"+ bucketKey + "/objects/" + objectName,
+		path+"/"+bucketKey+"/objects/"+objectName,
 		dataContent)
 
 	if err != nil {

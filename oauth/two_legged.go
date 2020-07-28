@@ -15,7 +15,7 @@ import (
 // TwoLeggedAuth struct holds data necessary for making requests in 2-legged context
 type TwoLeggedAuth struct {
 	AuthData
-	token Bearer
+	token   Bearer
 	expires time.Time
 }
 
@@ -38,11 +38,11 @@ func NewTwoLeggedClient(clientID, clientSecret string) TwoLeggedAuth {
 	}
 }
 
-func (a *TwoLeggedAuth) AuthenticateIfNecessary(scope string) (bearer Bearer, err error){
+func (a *TwoLeggedAuth) AuthenticateIfNecessary(scope string) (bearer Bearer, err error) {
 	if a.token.AccessToken != "" {
 		now := time.Now()
 
-		if now.After(a.expires){
+		if now.After(a.expires) {
 			log.Printf("Authenticate cause expired")
 			return a.Authenticate(scope)
 		} else {
@@ -55,6 +55,7 @@ func (a *TwoLeggedAuth) AuthenticateIfNecessary(scope string) (bearer Bearer, er
 	}
 
 }
+
 // Authenticate allows getting a token with a given scope
 func (a *TwoLeggedAuth) Authenticate(scope string) (bearer Bearer, err error) {
 
@@ -76,11 +77,12 @@ func (a *TwoLeggedAuth) Authenticate(scope string) (bearer Bearer, err error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	response, err := task.Do(req)
-
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		return
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)
@@ -93,7 +95,7 @@ func (a *TwoLeggedAuth) Authenticate(scope string) (bearer Bearer, err error) {
 
 	if err == nil {
 		a.token = bearer
-		exp := time.Duration(a.token.ExpiresIn)*time.Second
+		exp := time.Duration(a.token.ExpiresIn) * time.Second
 		a.expires = time.Now().Add(exp)
 	}
 

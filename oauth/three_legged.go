@@ -89,12 +89,12 @@ func (a ThreeLeggedAuth) GetToken(code string) (bearer Bearer, err error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	response, err := task.Do(req)
-
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		return
 	}
-
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)
@@ -130,12 +130,12 @@ func (a ThreeLeggedAuth) RefreshToken(refreshToken string, scope string) (bearer
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	response, err := task.Do(req)
-
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		return
 	}
-
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)

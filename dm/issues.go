@@ -22,8 +22,8 @@ type IssuesContainerData struct {
 			SyncedAt        time.Time   `json:"synced_at, omitempty"`
 			UpdatedAt       time.Time   `json:"updated_at, omitempty"`
 			CloseVersion    interface{} `json:"close_version, omitempty"`
-			ClosedAt        time.Time 	`json:"closed_at, omitempty"`
-			ClosedBy        string 		`json:"closed_by, omitempty"`
+			ClosedAt        time.Time   `json:"closed_at, omitempty"`
+			ClosedBy        string      `json:"closed_by, omitempty"`
 			CreatedBy       string      `json:"created_by, omitempty"`
 			StartingVersion int         `json:"starting_version, omitempty"`
 			Title           string      `json:"title, omitempty"`
@@ -34,12 +34,10 @@ type IssuesContainerData struct {
 	} `json:"data, omitempty"`
 }
 
-
 type IssuesAPI struct {
 	oauth.TwoLeggedAuth
 	IssuesAPIPath string
 }
-
 
 func NewIssuesAPIWithCredentials(clientID, clientSecret string) *IssuesAPI {
 	return &IssuesAPI{
@@ -48,7 +46,6 @@ func NewIssuesAPIWithCredentials(clientID, clientSecret string) *IssuesAPI {
 		IssuesAPIPath: fmt.Sprintf("/issues/v1/containers"),
 	}
 }
-
 
 func (api *IssuesAPI) GetIssues(issueContainerId string) (result *IssuesContainerData, err error) {
 	bearer, err := api.AuthenticateIfNecessary("data:read")
@@ -74,10 +71,12 @@ func getIssues(path string, token string) (result *IssuesContainerData, err erro
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	response, err := task.Do(req)
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		err = errors.New(strconv.Itoa(response.StatusCode))

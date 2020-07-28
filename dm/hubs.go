@@ -137,8 +137,7 @@ type Projects struct {
 	} `json:"data,omitempty"`
 }
 
-
-func (api *HubsAPI) GetHubs() (result Hubs, err error){
+func (api *HubsAPI) GetHubs() (result Hubs, err error) {
 	bearer, err := api.Authenticate("data:read")
 	if err != nil {
 		return Hubs{}, err
@@ -161,10 +160,12 @@ func listHubs(path string, token string) (result Hubs, err error) {
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	response, err := task.Do(req)
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		return Hubs{}, err
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)
@@ -177,7 +178,7 @@ func listHubs(path string, token string) (result Hubs, err error) {
 	return result, nil
 }
 
-func (api *HubsAPI) GetHubProjects(hubId string) (result Projects, err error){
+func (api *HubsAPI) GetHubProjects(hubId string) (result Projects, err error) {
 	bearer, err := api.Authenticate("data:read")
 	if err != nil {
 		return Projects{}, err
@@ -200,11 +201,13 @@ func getHubProjects(path string, token string) (result Projects, err error) {
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	response, err := task.Do(req)
-	defer response.Body.Close()
+	if response != nil {
+		defer response.Body.Close()
+	}
+
 	if err != nil {
 		return Projects{}, err
 	}
-
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)

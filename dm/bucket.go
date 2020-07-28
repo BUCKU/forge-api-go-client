@@ -58,7 +58,6 @@ type ListedBuckets struct {
 	Next string `json:"next"`
 }
 
-
 // CreateBucket creates and returns details of created bucket, or an error on failure
 func (api BucketAPI) CreateBucket(bucketKey, policyKey string) (result BucketDetails, err error) {
 
@@ -106,10 +105,6 @@ func (api BucketAPI) GetBucketDetails(bucketKey string) (result BucketDetails, e
 	return getBucketDetails(path, bucketKey, bearer.AccessToken)
 }
 
-
-
-
-
 /*
  *	SUPPORT FUNCTIONS
  */
@@ -127,10 +122,12 @@ func getBucketDetails(path, bucketKey, token string) (result BucketDetails, err 
 
 	req.Header.Set("Authorization", "Bearer "+token)
 	response, err := task.Do(req)
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		return
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)
@@ -171,10 +168,12 @@ func listBuckets(path, region, limit, startAt, token string) (result ListedBucke
 
 	req.Header.Set("Authorization", "Bearer "+token)
 	response, err := task.Do(req)
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		return
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)
@@ -212,10 +211,12 @@ func createBucket(path, bucketKey, policyKey, token string) (result BucketDetail
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 	response, err := task.Do(req)
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		return
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)
@@ -244,10 +245,12 @@ func deleteBucket(path, bucketKey, token string) (err error) {
 
 	req.Header.Set("Authorization", "Bearer "+token)
 	response, err := task.Do(req)
+	if response != nil {
+		defer response.Body.Close()
+	}
 	if err != nil {
 		return
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		content, _ := ioutil.ReadAll(response.Body)
