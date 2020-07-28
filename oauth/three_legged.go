@@ -124,6 +124,7 @@ func (a ThreeLeggedAuth) RefreshToken(refreshToken string, scope string) (bearer
 		a.Host+a.AuthPath+"/refreshtoken",
 		bytes.NewBufferString(body.Encode()),
 	)
+	req.Close = true
 
 	if err != nil {
 		return

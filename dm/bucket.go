@@ -115,12 +115,13 @@ func getBucketDetails(path, bucketKey, token string) (result BucketDetails, err 
 		path+"/"+bucketKey+"/details",
 		nil,
 	)
-
+	req.Close = true
 	if err != nil {
 		return
 	}
 
 	req.Header.Set("Authorization", "Bearer "+token)
+	req.Close = true
 	response, err := task.Do(req)
 	if response != nil {
 		defer response.Body.Close()
@@ -148,7 +149,7 @@ func listBuckets(path, region, limit, startAt, token string) (result ListedBucke
 		path,
 		nil,
 	)
-
+	req.Close = true
 	if err != nil {
 		return
 	}
@@ -204,7 +205,7 @@ func createBucket(path, bucketKey, policyKey, token string) (result BucketDetail
 		path,
 		bytes.NewReader(body),
 	)
-
+	req.Close = true
 	if err != nil {
 		return
 	}
@@ -238,7 +239,7 @@ func deleteBucket(path, bucketKey, token string) (err error) {
 		path+"/"+bucketKey,
 		nil,
 	)
-
+	req.Close = true
 	if err != nil {
 		return
 	}

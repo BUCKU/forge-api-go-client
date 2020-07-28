@@ -155,7 +155,7 @@ func listHubs(path string, token string) (result Hubs, err error) {
 	if err != nil {
 		return Hubs{}, err
 	}
-
+	req.Close = true
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 
@@ -196,7 +196,7 @@ func getHubProjects(path string, token string) (result Projects, err error) {
 	if err != nil {
 		return Projects{}, err
 	}
-
+	req.Close = true
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 

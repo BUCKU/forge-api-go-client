@@ -62,7 +62,7 @@ func listObjects(path, bucketKey, limit, beginsWith, startAt, token string) (res
 		path+"/"+bucketKey+"/objects",
 		nil,
 	)
-
+	req.Close = true
 	if err != nil {
 		return
 	}
@@ -109,7 +109,7 @@ func uploadObject(path, bucketKey, objectName string, data []byte, token string)
 	req, err := http.NewRequest("PUT",
 		path+"/"+bucketKey+"/objects/"+objectName,
 		dataContent)
-
+	req.Close = true
 	if err != nil {
 		return
 	}

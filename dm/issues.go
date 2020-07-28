@@ -62,6 +62,7 @@ func getIssues(path string, token string) (result *IssuesContainerData, err erro
 	task := http.Client{}
 
 	req, err := http.NewRequest("GET", path+"/quality-issues", nil)
+	req.Close = true
 
 	if err != nil {
 		return nil, err

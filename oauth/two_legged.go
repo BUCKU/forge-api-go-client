@@ -71,6 +71,7 @@ func (a *TwoLeggedAuth) Authenticate(scope string) (bearer Bearer, err error) {
 		a.Host+a.AuthPath+"/authenticate",
 		bytes.NewBufferString(body.Encode()),
 	)
+	req.Close = true
 
 	if err != nil {
 		return

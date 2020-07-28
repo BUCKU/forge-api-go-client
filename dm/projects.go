@@ -374,7 +374,7 @@ func getFolderContents(path string, token string) (result *FolderContents, err e
 	task := http.Client{}
 
 	req, err := http.NewRequest("GET", path+"/contents", nil)
-
+	req.Close = true
 	if err != nil {
 		return nil, err
 	}
@@ -417,7 +417,7 @@ func getItemData(path string, token string) (result *ItemData, err error) {
 	task := http.Client{}
 
 	req, err := http.NewRequest("GET", path, nil)
-
+	req.Close = true
 	if err != nil {
 		return nil, err
 	}
@@ -459,7 +459,7 @@ func getItemReader(link string, token string) (*io.ReadCloser, error) {
 	task := http.Client{}
 
 	req, err := http.NewRequest("GET", link, nil)
-
+	req.Close = true
 	if err != nil {
 		return nil, err
 	}
